@@ -1,12 +1,23 @@
+#directivas que se van a ir ejecutando en el proceso de creación de la imagen
+#antes traíamos la imagen pero no la personalizabamos
 FROM python:3.9.5
+#python:3.9.5 es la imagen base
 ENV PYTHONUNBUFFERED=1
+#con ENV voy a establecer la variable de entorn con su valor, esta es para trabajar con python de forma dockerizada
 # Corremos este comando para actualizar pip.
+#solucionamos el warning que aparecía diciendo que la versión estaba desactualizada
 RUN python -m pip install --upgrade pip
+#la sentencia COPY permite copiar un archivo (requierements.txt, ver que está creado) de un lugar hacia el otro (al directorio donde va a estar el dockerfile, por eso el punto que está al final)
 COPY requirements.txt .
+#la sentencia que sigue instala todo lo que hay en el archivo requirements.txt (son las librerias y dependencias que se desinstalan cuando elimino el contenedor)
 RUN pip install -r requirements.txt
 # En este caso como ya está creado el proyecto asignamos
 # como directorio de trabajo el directorio raíz del mismo.
+#workdir ya me lleva al directorio opt/back_end/marvel cada vez que acceda al contenedor y me evita hacerlo manualmente
 WORKDIR /opt/back_end/marvel
 COPY . /opt/back_end
+#el punto es el directorio donde está dockerfile (está dentro de la carpeta ejemplo_clase), la sentencia copia todo lo que hay dentro de ejemplo_clase en opt/backend (dentro del contenedor), para que cada vez que se crea esa imagen ya venga con todos esos archivos
 RUN apt-get update && apt-get -y install vim
+#son dos comandos concatenados, actualiza los repositorios del contenedor (linux) e instalamos vim (editor de texto para trabajar sobre la consola, es útil cuando dentro de un editor no hay Visual Studio Code)
 CMD python manage.py runserver 0.0.0.0:8000
+#Los RUN se ejecutan en el proceso de creación de la imagen, una vez que la imagen esté creada y el contenedor o servicio esté levantado, ejecutame el comando CMD (es el mismo comando que hay en docker-compose.yml donde dice comand, o sea que podría no estar o comentar uno de los dos). El CMD se ejecuta una sola vez, por eso siempre va al final

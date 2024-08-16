@@ -87,6 +87,7 @@ WSGI_APPLICATION = 'marvel.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 if os.getenv("DB_ENGINE") == "POSTGRES":
+    #si esta variable de entorno llamada DB_ENGINE (es la variable de entorno que establecí en docker-compose.yml) es igual a POSTGRES, ejecutame este DATABASES
 
     # NOTE: Reemplazamos la configuración inicial de base de datos para trabajar con Postgres:
     # Recordemos:
@@ -95,17 +96,19 @@ if os.getenv("DB_ENGINE") == "POSTGRES":
         #   POSTGRES_PASSWORD: 123Marvel!
 
     DATABASES = {
+        #configuro qué motor, qué base de datos y a dónde me voy a conectar desde django
+        #default es un diccionario, podría tener otras bases de datos y yo elegir a cual conectarme, nosotros vamos a trabajar con una sola, la cual va a contener varias tablas
         'default': {
-            # 'ENGINE': 'django.db.backends.postgresql_psycopg2' --> En desuso.
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'marvel_db',        # POSTGRES_DB
+            # 'ENGINE': 'django.db.backends.postgresql_psycopg2' --> En desuso. (se usaba en versiones anteriores de django)
+            'ENGINE': 'django.db.backends.postgresql', #es el motor que vamos a utilizar
+            'NAME': 'marvel_db',        # es el nombre de la base de datos (es el mismo valor que pusimos en POSTGRES_DB en docker-compose.yml)
             'USER' : 'inove_user',      # POSTGRES_USER
             'PASSWORD' : '123Marvel!',  # POSTGRES_PASSWORD
-            'HOST':'db',                # Nombre del servicio
-            'PORT': '5432'              # Número del puerto
+            'HOST':'db',                # Nombre del servicio que contiene la base de datos de Postgres (como no tenemos una dirección IP, está representada por el nombre del servicio)
+            'PORT': '5432'              # Número del puerto de la base de datos, está en docker-compose.yml, en ports
         }
     }
-
+#sino, usa este (es el que nos venía por defecto cuando iniciabamos un proyecto anteriormente)
 else:
     DATABASES = {
         'default': {

@@ -23,8 +23,3 @@ urlpatterns = [
     path("hola-mundo/", views.hola_mundo_api_view, name="hola-mundo"),
     path("get-comic/", views.get_comic_api_view, name="get-comic")
 ]
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path("hola-mundo/", views.hola_mundo, name="hola-mundo"),
-    path("get-comic/", views.get_comic_api_view, name="get-comic")
-]

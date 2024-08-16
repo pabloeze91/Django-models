@@ -61,6 +61,14 @@ class WishList(models.Model):
         default=1,
         blank=True
     )
+    favorite = models.BooleanField(default=False, verbose_name='favorite')
+    cart = models.BooleanField(default=False, verbose_name='cart')
+    wished_qty = models.PositiveIntegerField(default=0, verbose_name='wished qty')
+    bought_qty = models.PositiveIntegerField(default=0, verbose_name='bought qty')
+    class Meta:
+        db_table = 'e_commerce_wish_list'
+        verbose_name = 'wish list'
+        verbose_name_plural = 'wish lists'
     favorite = models.BooleanField(verbose_name='favorite')
     cart = models.BooleanField(verbose_name='cart')
     wished_qty = models.PositiveBigIntegerField(verbose_name='wished qty', default=0)

@@ -7,7 +7,7 @@ def hola_mundo_api_view(request):
 
 def get_comic_api_view(request):
     datos = {
-        "id": "1", 
+        "id": 1, 
         "marvel_comic": "1010", 
         "title": "Inove",
         "stock_qty": 6,

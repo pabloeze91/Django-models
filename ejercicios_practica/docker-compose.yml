@@ -3,16 +3,19 @@ version: "3.3"
 
 services:
 
+#Tenemos tres servicios en tres contenedores que se van a estar comunicando entre ellos: Uno con Django (modulo_3), otro con Postgres (db) y otro con adminer (administrador de base de datos)
+
+#El servicio db contiene una imagen de Postgres que la busca en Docker Hub (respositorio para imágenes)
+
   db:
     # Este servicio crea una base de datos de tipo Postgres.
     image: postgres:13.2
-    container_name: marvel_database
-    volumes:
+    volumes: #directorio local que guarda la información de la base de datos por si pasa algo en el contenedor, es un resguardo
       # Aquí se enlaza el contenido de dentro del contenedor con el directorio en nuestra PC
       # de esa manera lo que guardemos en la base de datos va a quedar accesible en nuestra carpeta.
       - ./database:/var/lib/postgresql/data
 
-    environment:
+    environment: #puede tener más variables de entorno pero postgres te pide como mínimo estas tres con estos nombres
       # Postgres nos exige que establezcamos un usuario por defecto, esto se hace por medio
       # de variables de entorno. Según el hub de Postgres:
       POSTGRES_DB: marvel_db
@@ -26,25 +29,26 @@ services:
   adminer:
     # Una interfaz para monitoreo y gestión de nuestra base de datos.
     # Se puede acceder a ella en localhost:8080
-    container_name: marvel_adminer
     image: adminer:4.8.0
     ports:
 
-      - 8080:8080
+      - 8080:8080 #enlaza puertos
     # depends_on indica que este servicio depende de que primero inicie "db"
-    depends_on: ["db"]
+    depends_on: ["db"] #quiero que el servicio adminer dependa del servicio db (el que está arriba), necesito que adminer se inicie una vez que db ya esté iniciado
 
-  modulo_3_tp:
+  #Lo que sigue es algo parecido a lo que teníamos hasta la clase anterior, un servicio llamado modulo_2, un volumen y puertos. Ahora nuestro docker-compose empieza a crecer, empieza a necesitar que lo personalicemos para que haga lo que nosotros queremos
+
+  modulo_3: #contenedor con python instalado, referencia a sí mismo, utiliza su propia imagen
     # build es el lugar desde donde toma los archivos para generar la imagen.
     # Toma como contexto de trabajo el directorio donde está el docker-compose.yml (.)
     # y busca el archivo "dockerfile".
-    build:
-      context: .
-      dockerfile: dockerfile
+    build: #a partir de esto es que el servicio modulo_3 construye la imagen modulo_3
+      context: . #el . es el directorio donde está el archivo docker-compose.yml
+      dockerfile: dockerfile #construye la imagen a partir de un archivo llamado dockerfile que está en ese directorio y que contiene directivas o instrucciones para personalizar 
     # Imágen a utilizar:
-    image: modulo_3
+    image: modulo_3 #imagen personalizada a partir de una imagen base traída de Docker Hub
     # Nombre del container:
-    container_name: modulo_3_tp
+    container_name: modulo_3
     # Carpetas enlazadas:
     volumes:
       # Source code directory:
@@ -56,8 +60,13 @@ services:
         - "8000:8000"
     # Variables de entorno
     environment:
-      DB_ENGINE: POSTGRES
+      DB_ENGINE: POSTGRES #variable de entorno
     # Control de consola:
+    stdin_open: true
+    tty: true
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - db #este servicio también va a depender de mi base de datos, necesito que esté levantada
     stdin_open: true
     tty: true
     command: python manage.py runserver 0.0.0.0:8000
